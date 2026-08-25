@@ -1,0 +1,7 @@
+"use client";
+import type { AnalysisError, Screen } from "./types";
+import { AppShell, Icon, ProgressSteps } from "./ui";
+
+export default function ErrorView({ error,sidebarOpen,setSidebarOpen,onNavigate,onSignOut,onDifferent,onRetry }: { error:AnalysisError;sidebarOpen:boolean;setSidebarOpen:(v:boolean)=>void;onNavigate:(s:Screen)=>void;onSignOut:()=>void;onDifferent:()=>void;onRetry:()=>void }) {
+  return <AppShell current="error" title="Upload CT Scan" sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} onNavigate={onNavigate} onSignOut={onSignOut}><ProgressSteps active={error.phase==="upload"?1:2}/><section className="error-card"><span className="error-icon"><Icon name="file" size={52}/><b>!</b></span><h1>{error.title}</h1><p>{error.message}</p><hr/><div className="error-fixes"><h2>How to fix this:</h2><ul>{error.fixes.map(fix=><li key={fix}>{fix}</li>)}</ul></div><hr/><div className="error-actions">{error.retryable&&<button className="button button--primary" onClick={onRetry}><Icon name="refresh"/> Try Again</button>}<button className="button button--primary" onClick={onDifferent}><Icon name="folder"/> Choose Different Files</button><button className="button button--outline" onClick={()=>onNavigate("overview")}><Icon name="arrow"/> Return to Overview</button></div></section><details className="technical-details"><summary><Icon name="settings"/> Technical Details</summary><p>Validation code: <strong>{error.code}</strong></p><p>Request ID: <strong>{error.requestId}</strong></p></details></AppShell>;
+}
