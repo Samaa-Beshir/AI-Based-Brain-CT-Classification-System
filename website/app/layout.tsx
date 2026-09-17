@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+  ? `https://${process.env.NEXT_PUBLIC_SITE_URL.replace(/^https?:\/\//, "")}`
+  : "http://localhost:3000";
+
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://clyra-brain-ct.vercel.app"),
+  metadataBase: new URL(siteUrl),
   title: "CLYRA | AI-Based Brain CT Analysis",
   description:
     "CLYRA is an AI-assisted brain CT analysis workspace for classification, lesion segmentation, and hemorrhage subtype assessment.",
@@ -14,14 +18,14 @@ export const metadata: Metadata = {
     title: "CLYRA | AI-Based Brain CT Analysis",
     description: "See it. Map it. Know it.",
     type: "website",
-    url: "/",
-    images: [{ url: "https://clyra-brain-ct.samaareda-sr.chatgpt.site/og.png", width: 1536, height: 1024, alt: "CLYRA — AI-Based Brain CT Analysis" }],
+    url: siteUrl,
+    images: [{ url: "/og.png", width: 1536, height: 1024, alt: "CLYRA — AI-Based Brain CT Analysis" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "CLYRA | AI-Based Brain CT Analysis",
     description: "See it. Map it. Know it.",
-    images: ["https://clyra-brain-ct.samaareda-sr.chatgpt.site/og.png"],
+    images: ["/og.png"],
   },
 };
 

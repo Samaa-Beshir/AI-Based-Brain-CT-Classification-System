@@ -56,10 +56,15 @@ export default function ClyraApp() {
   const [error, setError] = useState<AnalysisError>(INVALID_SEQUENCE_ERROR);
 
   useEffect(() => {
+    let saved: string | null = null;
     try {
-      const saved = localStorage.getItem("clyra-analysis-history");
-      if (saved) setCases(JSON.parse(saved));
+      saved = localStorage.getItem("clyra-analysis-history");
     } catch {}
+    if (!saved) return;
+    const timer = window.setTimeout(() => {
+      try { setCases(JSON.parse(saved)); } catch {}
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, []);
 
   function remember(next: AnalysisResult) {
@@ -139,6 +144,7 @@ export default function ClyraApp() {
       const code = caught instanceof Error ? caught.message : "ANALYSIS_FAILED";
       const isSizeError = code === "HTTP_413" || code === "FILE_TOO_LARGE";
       const isImageError = code === "INVALID_PNG_IMAGE" || code === "IMAGE_PREPARATION_FAILED";
+      const fileLabel = next.mode === "sequence" ? "the five PNG files" : "the selected CT image";
       setError({
         title: isSizeError ? "The uploaded sequence is too large" : isImageError ? "We couldn’t prepare these PNG images" : "Analysis service is temporarily unavailable",
         message: isSizeError
@@ -153,7 +159,7 @@ export default function ClyraApp() {
           ? ["Use the original 384×384 Stage 3 PNG slices", "Remove unnecessary metadata from the PNG files", "Choose the five files again"]
           : isImageError
             ? ["Choose five valid PNG images", "Keep the images in anatomical order", "Ensure the third image is the center slice"]
-            : ["Try the request again after a short wait", "Choose the five PNG files again", "Use the Sample Case to explore the interface"],
+            : ["Wait briefly while the model service wakes up, then try again", `Choose ${fileLabel} again`, "Use the Sample Case to explore the interface"],
         retryable: !isImageError,
       });
       setScreen("error");
